@@ -1,13 +1,13 @@
 import "./App.css";
 import Navbar from "./Components/Navbar/Navbar";
-import { Routes, Route, Link, Navigate, Outlet } from "react-router-dom";
+import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import Home from "./Pages/Home/HomePage";
 import Services from "./Pages/Services/ServicesPage";
 import About from "./Pages/About/AboutPage";
 import Contact from "./Pages/Contact/ContactPage";
 import Register from "./Pages/Register/RegisterPage";
 import Login from "./Pages/Login/LoginPage";
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import axios from "axios";
 
 const ProtectedRoute = ({ isAuthen, redirectPath = "/" } : any) => {
