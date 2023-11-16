@@ -1,20 +1,16 @@
 import { useEffect, useState } from "react";
 import { Button, Form, Input } from "antd";
-import axios from "axios";
+import { RegisterData } from "../../Interface/Auth.interface";
+import { useAuth } from "../../Context/AuthContext";
 
 const RegisterPage = () => {
-  const [registerData, setRegisterData] = useState<FormValue>();
-  interface FormValue {
-    username: string;
-    password: string;
-    fname: string;
-    lname: string;
-  }
+  const [registerData, setRegisterData] = useState<RegisterData | null>(null);
+  const { handleRegister } = useAuth();
 
-  const onSubmitForm = (data: FormValue) => {
+  const onSubmitForm = (data: RegisterData) => {
     setRegisterData((prevState) => ({
       ...prevState,
-      username: data.username,
+      email: data.email,
       password: data.password,
       fname: data.fname,
       lname: data.lname,
@@ -22,27 +18,11 @@ const RegisterPage = () => {
   };
 
   useEffect(() => {
+    if(registerData !== null) {
     console.log("registerData", registerData);
-    // submitRegister();
+    handleRegister(registerData);
+    }
   }, [registerData]);
-
-  const submitRegister = () => {
-    axios({
-      method: "post",
-      maxBodyLength: Infinity,
-      url: ``,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      data: registerData,
-    })
-      .then((res) => {
-        console.log("Register response", res.data);
-      })
-      .catch((error) => {
-        console.log("API Error", error);
-      });
-  };
 
   return (
     <div className="w-full flex justify-center items-center mt-20">
@@ -54,12 +34,12 @@ const RegisterPage = () => {
         autoComplete="off"
       >
         <Form.Item
-          label="Username"
-          name="username"
+          label="Email"
+          name="email"
           rules={[
             {
               required: true,
-              message: "Please enter your username",
+              message: "Please enter your email",
             },
           ]}
         >

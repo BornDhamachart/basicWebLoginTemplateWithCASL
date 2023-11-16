@@ -1,55 +1,29 @@
 import { useEffect, useState } from "react";
 import { Button, Form, Input, Checkbox } from "antd";
-import axios from "axios";
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from "../../Context/AuthContext";
+import { LoginData } from "../../Interface/Auth.interface";
 
 const LoginPage = () => {
-  const [loginData, setLoginData] = useState<FormValue>();
+  const [loginData, setLoginData] = useState<LoginData | null>(null);
+  const { handleLogin } = useAuth();
 
-  const navigate = useNavigate();
-
-  interface FormValue {
-    username: string;
-    password: string;
-  }
-  const onSubmitForm = (data: FormValue) => {
-    setLoginData((prevState) => ({
+  const onSubmitForm = (data: LoginData) => {
+    setLoginData((prevState : any) => ({
       ...prevState,
-      username: data.username,
+      email: data.username,
       password: data.password,
     }));
-  };
-
-  const submitLogin = () => {
-    axios({
-      method: "post",
-      maxBodyLength: Infinity,
-      url: ``,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      data: loginData,
-    })
-      .then((res) => {
-        console.log("Login response", res.data);
-        if(res.data.status === "ok" ) {
-            //Save token to local storage
-            localStorage.setItem("token", res.data.token);
-            //Redirect to some path
-            navigate('/');
-        }
-      })
-      .catch((error) => {
-        console.log("API Error", error);
-      });
-  };
+  }
 
   useEffect(() => {
+    if(loginData !== null) {
     console.log("loginData", loginData);
-    // submitLogin();
+    handleLogin(loginData);
+    }
   }, [loginData]);
 
   return (
+    <>
     <div className="w-full flex justify-center items-center mt-20">
       <Form
         labelCol={{ span: 8 }}
@@ -90,6 +64,7 @@ const LoginPage = () => {
         </Form.Item>
       </Form>
     </div>
+    </>
   );
 };
 

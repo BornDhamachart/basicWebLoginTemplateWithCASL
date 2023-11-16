@@ -7,11 +7,19 @@ import About from "./Pages/About/AboutPage";
 import Contact from "./Pages/Contact/ContactPage";
 import Register from "./Pages/Register/RegisterPage";
 import Login from "./Pages/Login/LoginPage";
-import { useEffect, useState } from 'react'
-import axios from "axios";
+import { useAuth } from "./Context/AuthContext";
+import { useEffect } from "react"
 
-const ProtectedRoute = ({ isAuthen, redirectPath = "/" } : any) => {
-  if (!isAuthen) {
+const AdminProtectedRoute = ({ isAuthen, role, redirectPath = "/" }: any) => {
+  if (!isAuthen || role !== "Admin") {
+    return <Navigate to={redirectPath} replace />;
+  }
+
+  return <Outlet />;
+};
+
+const UserProtectedRoute = ({ isAuthen, role, redirectPath = "/" }: any) => {
+  if (!isAuthen || role !== "User") {
     return <Navigate to={redirectPath} replace />;
   }
 
@@ -19,37 +27,11 @@ const ProtectedRoute = ({ isAuthen, redirectPath = "/" } : any) => {
 };
 
 function App() {
-  const [isAuthen, setIsAuthen] = useState(false);
-
-  const authentication = () => {
-    const token = localStorage.getItem('token');
-    axios({
-      method: "post",
-      maxBodyLength: Infinity,
-      url: ``,
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer "+ token
-        },
-    })
-      .then((res) => {
-        console.log("Authentication response", res.data);
-        if(res.data.status === "ok" ) {
-          console.log("Successfully authenticated");
-          setIsAuthen(true);
-      } else {
-        console.log("Unsuccessfully authenticated");
-        localStorage.removeItem('token');
-      }
-      })
-      .catch((error) => {
-        console.log("API Error", error);
-      });
-  };
+  const { isAuthen, user } = useAuth();
 
   useEffect(() => {
-    authentication();
-  }, []);
+    console.log("user", user);
+  }, [user]);
 
   return (
     <>
@@ -57,11 +39,13 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="" element={<Home />} />
-          <Route element={<ProtectedRoute isAuthen={isAuthen} />}>
+          <Route element={<AdminProtectedRoute isAuthen={isAuthen} role={user?.role} />}>
             <Route path="services" element={<Services />} />
             <Route path="about" element={<About />} />
           </Route>
-          <Route path="contact" element={<Contact />} />
+          <Route element={<UserProtectedRoute isAuthen={isAuthen} role={user?.role} />}>
+            <Route path="contact" element={<Contact />} />
+          </Route>
           <Route path="register" element={<Register />} />
           <Route path="login" element={<Login />} />
           <Route path="*" element={<>404 Not found</>} />
