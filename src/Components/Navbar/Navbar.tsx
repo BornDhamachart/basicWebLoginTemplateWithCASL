@@ -2,10 +2,12 @@ import { useState } from "react";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../Context/AuthContext";
+import defineAbilityFor from "../../defineAbility";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, handleLogout } = useAuth();
+  const ability = defineAbilityFor(user);
 
   return (
     <nav className="bg-white fixed w-full z-20 top-0 left-0 border-b border-gray-200 opacity-80">
@@ -40,10 +42,9 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <div
-                className="bg-white font-medium rounded-lg text-sm px-4 py-2 text-center mr-3 md:mr-0"
-              >
-                Profile detail</div>
+              <div className="bg-white font-medium rounded-lg text-sm px-4 py-2 text-center mr-3 md:mr-0">
+                Profile detail
+              </div>
               <button
                 type="button"
                 className="text-blue-700 bg-white font-medium rounded-lg text-sm px-4 py-2 text-center mr-3 md:mr-0"
@@ -75,18 +76,22 @@ const Navbar = () => {
             >
               Home
             </Link>
-            <Link
-              to="/about"
-              className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
-            >
-              About
-            </Link>
-            <Link
-              to="/services"
-              className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
-            >
-              Services
-            </Link>
+            {ability.can("read", "About") && (
+              <Link
+                to="/about"
+                className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
+              >
+                About
+              </Link>
+            )}
+            {ability.can("read", "Services") && (
+              <Link
+                to="/services"
+                className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"
+              >
+                Services
+              </Link>
+            )}
             <Link
               to="/contact"
               className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0"

@@ -23,6 +23,7 @@ const UserProtectedRoute = ({ isAuthen, role, redirectPath = "/" }: any) => {
     return <Navigate to={redirectPath} replace />;
   }
 
+  // return <Outlet />;
   return <Outlet />;
 };
 
@@ -45,6 +46,7 @@ function App() {
           </Route>
           <Route element={<UserProtectedRoute isAuthen={isAuthen} role={user?.role} />}>
             <Route path="contact" element={<Contact />} />
+            <Route path="services" element={<Services />} />
           </Route>
           <Route path="register" element={<Register />} />
           <Route path="login" element={<Login />} />
